@@ -28,16 +28,12 @@ services:
 
   backend1:
     image: vipunsanjana/backend:latest
-    environment:
-      - HOSTNAME=backend1
     networks:
       - mern-net
     restart: unless-stopped
 
   backend2:
     image: vipunsanjana/backend:latest
-    environment:
-      - HOSTNAME=backend2
     networks:
       - mern-net
     restart: unless-stopped
