@@ -1,7 +1,7 @@
 FROM nginx:stable-alpine
 
-# Copy your built frontend static files into Nginx's default directory
-COPY ../frontend/build/ /usr/share/nginx/html/
+# Since build context is project root, path to frontend build is:
+COPY frontend/build/ /usr/share/nginx/html/
 
-# Copy your custom nginx config
+# Copy nginx config inside nginx-lb folder
 COPY nginx.conf /etc/nginx/nginx.conf
