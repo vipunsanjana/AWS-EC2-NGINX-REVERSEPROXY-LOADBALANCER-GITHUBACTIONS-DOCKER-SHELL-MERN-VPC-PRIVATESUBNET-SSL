@@ -27,7 +27,9 @@ services:
     restart: unless-stopped
 
   nginx-lb:
-    image: vipunsanjana/nginx-lb
+    build:
+      context: .
+      dockerfile: ./nginx-lb/Dockerfile
     container_name: nginx-lb
     ports:
       - "80:80"
