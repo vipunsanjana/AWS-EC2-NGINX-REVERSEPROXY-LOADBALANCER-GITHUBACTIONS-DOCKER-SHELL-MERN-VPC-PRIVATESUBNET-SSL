@@ -4,4 +4,4 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 EXPOSE 5000
-CMD ["node", "index.js"]  # or your entry file name
+CMD ["node", "server.js"]  # or your entry file name
