@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   nginx-lb:
     image: vipunsanjana/nginx-lb:latest
@@ -13,31 +11,3 @@ services:
       - frontend1
       - frontend2
     restart: unless-stopped
-
-  frontend1:
-    image: vipunsanjana/frontend:latest
-    networks:
-      - mern-net
-    restart: unless-stopped
-
-  frontend2:
-    image: vipunsanjana/frontend:latest
-    networks:
-      - mern-net
-    restart: unless-stopped
-
-  backend1:
-    image: vipunsanjana/backend:latest
-    networks:
-      - mern-net
-    restart: unless-stopped
-
-  backend2:
-    image: vipunsanjana/backend:latest
-    networks:
-      - mern-net
-    restart: unless-stopped
-
-networks:
-  mern-net:
-    driver: bridge
