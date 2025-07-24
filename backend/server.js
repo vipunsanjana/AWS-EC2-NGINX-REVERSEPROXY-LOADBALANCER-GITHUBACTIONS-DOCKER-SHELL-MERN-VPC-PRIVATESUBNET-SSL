@@ -22,6 +22,26 @@ app.get('/api/health', (req, res) => {
   res.status(200).send('OK');
 });
 
+// Add this below your existing endpoints
+
+app.get('/api/info', (req, res) => {
+  res.json({
+    project: "MERN Deployment",
+    developer: "Vipun Sanjana",
+    stack: [
+      "AWS EC2",
+      "NGINX Reverse Proxy",
+      "Docker & Docker Hub",
+      "GitHub Actions (CI/CD)",
+      "MERN Stack",
+      "VPC with Private Subnet",
+      "SSL & HTTPS",
+      "Cloud Security (IAM, SGs)"
+    ]
+  });
+});
+
+
 app.listen(PORT, () => {
   console.log(`Backend running on port ${PORT}`);
 });
