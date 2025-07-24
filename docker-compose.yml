@@ -6,18 +6,24 @@ services:
     networks:
       - mern-net
     restart: unless-stopped
+    ports:
+      - "5001:5000"
 
   backend2:
     image: vipunsanjana/backend:latest
     networks:
       - mern-net
     restart: unless-stopped
+    ports:
+      - "5002:5000"
 
   frontend:
     image: vipunsanjana/frontend:latest
     networks:
       - mern-net
     restart: unless-stopped
+    ports:
+      - "8080:80"
 
   nginx-lb:
     image: vipunsanjana/nginx-lb:latest
