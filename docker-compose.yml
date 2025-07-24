@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  nginx-lb:
+    image: vipunsanjana/nginx-lb:latest
+    ports:
+      - "80:80"
+    networks:
+      - mern-net
+    depends_on:
+      - backend1
+      - backend2
+      - frontend1
+      - frontend2
+    restart: unless-stopped
+
+  frontend1:
+    image: vipunsanjana/frontend:latest
+    networks:
+      - mern-net
+    restart: unless-stopped
+
+  frontend2:
+    image: vipunsanjana/frontend:latest
+    networks:
+      - mern-net
+    restart: unless-stopped
+
+  backend1:
+    image: vipunsanjana/backend:latest
+    environment:
+      - HOSTNAME=backend1
+    networks:
+      - mern-net
+    restart: unless-stopped
+
+  backend2:
+    image: vipunsanjana/backend:latest
+    environment:
+      - HOSTNAME=backend2
+    networks:
+      - mern-net
+    restart: unless-stopped
+
+networks:
+  mern-net:
+    driver: bridge

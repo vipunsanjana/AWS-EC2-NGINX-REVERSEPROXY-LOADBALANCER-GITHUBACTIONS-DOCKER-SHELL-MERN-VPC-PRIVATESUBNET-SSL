@@ -1,14 +1,27 @@
 const express = require('express');
 const cors = require('cors');
-
 const app = express();
 const PORT = 5000;
 
+// Mock database (replace with real DB in production)
+const products = [
+  { id: 1, name: "Product A" },
+  { id: 2, name: "Product B" }
+];
+
 app.use(cors());
-app.get('/api/hello', (req, res) => {
-  res.json({ message: 'Hello from Express backend!' });
+app.use(express.json());
+
+// API endpoint
+app.get('/api/products', (req, res) => {
+  res.json(products);
+});
+
+// Health check
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Backend running on port ${PORT}`);
 });

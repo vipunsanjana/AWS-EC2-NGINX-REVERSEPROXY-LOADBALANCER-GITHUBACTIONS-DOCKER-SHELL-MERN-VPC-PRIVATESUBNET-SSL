@@ -2,21 +2,23 @@ import { useEffect, useState } from 'react';
 import './App.css';
 
 function App() {
-  const [message, setMessage] = useState('Loading...');
+  const [products, setProducts] = useState([]);
 
-  // useEffect(() => {
-  //   fetch('/api/hello')
-  //     .then((res) => res.json())
-  //     .then((data) => setMessage(data.message))
-  //     .catch((err) => setMessage(err.message || 'Error fetching data'));;
-  // }, []);
+  useEffect(() => {
+    fetch('/api/products')
+      .then(res => res.json())
+      .then(data => setProducts(data));
+  }, []);
 
   return (
-    <div className="container">
-      <div className="card">
-        <h1 className="title">🚀 MERN App</h1>
-        <p className="message">"hhhhhhhhhhhhhhhhh"</p>
-      </div>
+    <div className="App">
+      <h1>MERN Production App</h1>
+      <h2>Products:</h2>
+      <ul>
+        {products.map(product => (
+          <li key={product.id}>{product.name}</li>
+        ))}
+      </ul>
     </div>
   );
 }
