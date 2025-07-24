@@ -2,28 +2,28 @@ version: '3.8'
 
 services:
   backend1:
-    image: vipunsanjanamernapp/backend
+    image: vipunsanjana/backend
     container_name: backend1
     networks:
       - mern-net
     restart: unless-stopped
 
   backend2:
-    image: vipunsanjanamernapp/backend
+    image: vipunsanjana/backend
     container_name: backend2
     networks:
       - mern-net
     restart: unless-stopped
 
   frontend:
-    image: vipunsanjanamernapp/frontend
+    image: vipunsanjana/frontend
     container_name: frontend
     networks:
       - mern-net
     restart: unless-stopped
 
   nginx-lb:
-    image: vipunsanjanamernapp/nginx-lb
+    image: vipunsanjana/nginx-lb
     container_name: nginx-lb
     ports:
       - "80:80"
