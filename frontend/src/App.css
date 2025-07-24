@@ -1,6 +1,6 @@
 body {
   font-family: 'Segoe UI', sans-serif;
-  background: #f8f9fa;
+  background: #f0f2f5;
   margin: 0;
   padding: 0;
   color: #333;
@@ -8,16 +8,17 @@ body {
 
 .container {
   max-width: 800px;
-  margin: 50px auto;
-  padding: 30px;
+  margin: 30px auto;
+  padding: 20px;
   background: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
   text-align: center;
   color: #2c3e50;
+  font-size: 2rem;
 }
 
 .section {
@@ -35,13 +36,14 @@ ul {
   padding-left: 0;
 }
 
-
-
 li {
   background: #ecf0f1;
   padding: 10px;
   margin-bottom: 8px;
   border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   transition: background 0.3s ease;
 }
 
@@ -49,4 +51,30 @@ li:hover {
   background: #d0e6f6;
 }
 
+input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  flex: 1;
+  margin-right: 10px;
+}
 
+button {
+  padding: 8px 12px;
+  border: none;
+  background-color: #2980b9;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #1f5e85;
+}
+
+.input-row {
+  display: flex;
+  margin-bottom: 15px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
