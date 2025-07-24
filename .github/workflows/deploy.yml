@@ -7,61 +7,73 @@ on:
 env:
   DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
   DOCKERHUB_ACCESS_TOKEN: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
+  COMPOSE_PROJECT_NAME: mern_app
 
 jobs:
-  build:
-    runs-on: self-hosted
+  build-push:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       - name: Login to Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ env.DOCKERHUB_USERNAME }}
           password: ${{ env.DOCKERHUB_ACCESS_TOKEN }}
 
       - name: Build and push backend
-        run: |
-          docker build -t $DOCKERHUB_USERNAME/backend:latest ./backend
-          docker push $DOCKERHUB_USERNAME/backend:latest
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          push: true
+          tags: ${{ env.DOCKERHUB_USERNAME }}/backend:latest
 
       - name: Build and push frontend
-        run: |
-          docker build -t $DOCKERHUB_USERNAME/frontend:latest ./frontend
-          docker push $DOCKERHUB_USERNAME/frontend:latest
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          push: true
+          tags: ${{ env.DOCKERHUB_USERNAME }}/frontend:latest
 
       - name: Build and push nginx-lb
-        run: |
-          docker build -t $DOCKERHUB_USERNAME/nginx-lb:latest ./nginx-lb
-          docker push $DOCKERHUB_USERNAME/nginx-lb:latest
+        uses: docker/build-push-action@v5
+        with:
+          context: ./nginx-lb
+          push: true
+          tags: ${{ env.DOCKERHUB_USERNAME }}/nginx-lb:latest
 
   deploy:
-    needs: build
+    needs: build-push
     runs-on: self-hosted
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Ensure Docker is available
+        run: docker version
 
-      - name: Install Docker Compose (if not present)
+      - name: Install Docker Compose
         run: |
-          if ! command -v docker-compose &> /dev/null
-          then
-            sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-            sudo chmod +x /usr/local/bin/docker-compose
-          fi
+          sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
 
       - name: Stop and remove containers
-        run: docker-compose down || true
+        run: |
+          if [ -f docker-compose.yml ]; then
+            docker-compose down || true
+          fi
 
       - name: Pull latest images
         run: |
-          docker pull $DOCKERHUB_USERNAME/backend:latest
-          docker pull $DOCKERHUB_USERNAME/frontend:latest
-          docker pull $DOCKERHUB_USERNAME/nginx-lb:latest
+          docker pull ${{ env.DOCKERHUB_USERNAME }}/backend:latest
+          docker pull ${{ env.DOCKERHUB_USERNAME }}/frontend:latest
+          docker pull ${{ env.DOCKERHUB_USERNAME }}/nginx-lb:latest
 
       - name: Start services
-        run: docker-compose up -d
+        run: |
+          if [ ! -f docker-compose.yml ]; then
+            echo "ERROR: docker-compose.yml not found!"
+            exit 1
+          fi
+          docker-compose up -d

@@ -2,27 +2,31 @@ version: '3.8'
 
 services:
   backend1:
-    image: vipunsanjana/backend:latest
+    image: vipunsanjanamernapp/backend
+    container_name: backend1
     networks:
       - mern-net
     restart: unless-stopped
 
   backend2:
-    image: vipunsanjana/backend:latest
+    image: vipunsanjanamernapp/backend
+    container_name: backend2
     networks:
       - mern-net
     restart: unless-stopped
 
   frontend:
-    image: vipunsanjana/frontend:latest
+    image: vipunsanjanamernapp/frontend
+    container_name: frontend
     networks:
       - mern-net
     restart: unless-stopped
 
   nginx-lb:
-    image: vipunsanjana/nginx-lb:latest
+    image: vipunsanjanamernapp/nginx-lb
+    container_name: nginx-lb
     ports:
-      - "80:80"    # expose nginx on host port 80
+      - "80:80"
     networks:
       - mern-net
     depends_on:
@@ -34,3 +38,6 @@ services:
 networks:
   mern-net:
     driver: bridge
+
+
+    
