@@ -24,6 +24,7 @@ jobs:
         username: ${{ env.DOCKERHUB_USERNAME }}
         password: ${{ env.DOCKERHUB_ACCESS_TOKEN }}
         
+        
     - name: Build and push backend
       run: |
         docker build -t $DOCKERHUB_USERNAME/backend:latest ./backend
