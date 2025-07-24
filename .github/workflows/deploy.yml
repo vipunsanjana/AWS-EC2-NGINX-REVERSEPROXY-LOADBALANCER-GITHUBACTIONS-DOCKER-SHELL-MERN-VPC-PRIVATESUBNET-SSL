@@ -21,22 +21,27 @@ jobs:
 
       - name: Build backend image
         run: |
+          echo "Building backend Docker image..."
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/mern-backend:latest ./backend
 
       - name: Build frontend image
         run: |
+          echo "Building frontend Docker image..."
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/mern-frontend:latest ./frontend
 
       - name: Push backend image
         run: |
+          echo "Pushing backend image to Docker Hub..."
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/mern-backend:latest
 
       - name: Push frontend image
         run: |
+          echo "Pushing frontend image to Docker Hub..."
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/mern-frontend:latest
 
       - name: Setup SSH key
         run: |
+          echo "Setting up SSH key for EC2..."
           echo "${{ secrets.EC2_SSH_KEY }}" > ec2_key.pem
           chmod 600 ec2_key.pem
 
@@ -47,17 +52,38 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key_path: ec2_key.pem
           script: |
+            echo "Pulling backend Docker image on EC2..."
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/mern-backend:latest
+
+            echo "Pulling frontend Docker image on EC2..."
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/mern-frontend:latest
+
+            echo "Stopping and removing backend container 5001 if exists..."
             docker stop backend_5001 || true
             docker rm backend_5001 || true
+
+            echo "Running backend container on port 5001..."
             docker run -d --name backend_5001 -p 5001:5000 ${{ secrets.DOCKERHUB_USERNAME }}/mern-backend:latest
+
+            echo "Stopping and removing backend container 5002 if exists..."
             docker stop backend_5002 || true
             docker rm backend_5002 || true
+
+            echo "Running backend container on port 5002..."
             docker run -d --name backend_5002 -p 5002:5000 ${{ secrets.DOCKERHUB_USERNAME }}/mern-backend:latest
+
+            echo "Stopping and removing frontend container if exists..."
             docker stop frontend || true
             docker rm frontend || true
+
+            echo "Running frontend container on port 8080..."
             docker run -d --name frontend -p 8080:80 ${{ secrets.DOCKERHUB_USERNAME }}/mern-frontend:latest
+
+            echo "Stopping and removing nginx load balancer container if exists..."
             docker stop nginx_lb || true
             docker rm nginx_lb || true
+
+            echo "Running nginx load balancer container..."
             docker run -d --name nginx_lb -p 80:80 -v ~/mern-app/scripts/nginx_lb.conf:/etc/nginx/conf.d/default.conf nginx:alpine
+
+            echo "Deployment completed successfully."
