@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CONFIG_DIR="/home/ubuntu/my-mern-app/scripts"
+CONFIG_DIR="/home/ubuntu/mern-app/scripts"
 
 docker stop nginx_lb 2>/dev/null || true
 docker rm nginx_lb 2>/dev/null || true

@@ -84,6 +84,6 @@ jobs:
             docker rm nginx_lb || true
 
             echo "Running nginx load balancer container..."
-            docker run -d --name nginx_lb -p 80:80 -v /home/ubuntu/my-mern-app/scripts/nginx_lb.conf:/etc/nginx/conf.d/default.conf nginx:alpine
+            docker run -d --name nginx_lb -p 80:80 -v /home/ubuntu/mern-app/scripts/nginx_lb.conf:/etc/nginx/conf.d/default.conf nginx:alpine
 
             echo "Deployment completed successfully."
