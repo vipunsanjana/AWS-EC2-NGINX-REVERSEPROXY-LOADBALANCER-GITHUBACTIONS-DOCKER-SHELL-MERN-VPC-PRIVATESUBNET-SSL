@@ -8,7 +8,7 @@ function App() {
     fetch('/api/hello')
       .then((res) => res.json())
       .then((data) => setMessage(data.message))
-      .catch((err) => setMessage(err));
+      .catch((err) => setMessage(err.message || 'Error fetching data'));;
   }, []);
 
   return (
