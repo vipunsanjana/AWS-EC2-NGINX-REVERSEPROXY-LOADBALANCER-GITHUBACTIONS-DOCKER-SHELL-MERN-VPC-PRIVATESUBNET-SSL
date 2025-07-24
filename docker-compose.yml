@@ -1,4 +1,24 @@
+version: '3.8'
+
 services:
+  backend1:
+    image: vipunsanjana/backend:latest
+    networks:
+      - mern-net
+    restart: unless-stopped
+
+  backend2:
+    image: vipunsanjana/backend:latest
+    networks:
+      - mern-net
+    restart: unless-stopped
+
+  frontend:
+    image: vipunsanjana/frontend:latest
+    networks:
+      - mern-net
+    restart: unless-stopped
+
   nginx-lb:
     image: vipunsanjana/nginx-lb:latest
     ports:
@@ -8,6 +28,9 @@ services:
     depends_on:
       - backend1
       - backend2
-      - frontend1
-      - frontend2
+      - frontend
     restart: unless-stopped
+
+networks:
+  mern-net:
+    driver: bridge
