@@ -18,7 +18,7 @@ app.get('/api/products', (req, res) => {
 });
 
 // Health check
-app.get('/health', (req, res) => {
+app.get('/api/health', (req, res) => {
   res.status(200).send('OK');
 });
 
