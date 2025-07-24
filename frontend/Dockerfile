@@ -6,13 +6,19 @@ COPY . .
 RUN npm run build
 
 FROM nginx:alpine
+
+# Remove ALL default Nginx files
+RUN rm -rf /usr/share/nginx/html/*
+
+# Copy your React/Vue build output
 COPY --from=builder /app/dist /usr/share/nginx/html
-RUN rm /etc/nginx/conf.d/default.conf
+
+# Create a new minimal Nginx config
 RUN echo 'server { \
     listen 80; \
+    root /usr/share/nginx/html; \
+    index index.html; \
     location / { \
-        root /usr/share/nginx/html; \
-        index index.html; \
         try_files $uri $uri/ /index.html; \
     } \
 }' > /etc/nginx/conf.d/default.conf
