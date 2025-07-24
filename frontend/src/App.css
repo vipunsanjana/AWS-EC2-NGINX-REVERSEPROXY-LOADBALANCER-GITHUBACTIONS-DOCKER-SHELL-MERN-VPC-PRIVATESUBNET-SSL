@@ -1,20 +1,19 @@
-*{
+* {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-
 body {
   font-family: 'Segoe UI', sans-serif;
   background: #f0f2f5;
-  margin: 0;
-  padding: 0;
   color: #333;
+  padding: 10px;
 }
 
 .container {
   max-width: 800px;
+  width: 100%;
   margin: 30px auto;
   padding: 20px;
   background: white;
@@ -36,6 +35,7 @@ h2 {
   color: #34495e;
   border-bottom: 2px solid #ccc;
   padding-bottom: 5px;
+  font-size: 1.3rem;
 }
 
 ul {
@@ -51,6 +51,8 @@ li {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
   transition: background 0.3s ease;
 }
 
@@ -58,12 +60,19 @@ li:hover {
   background: #d0e6f6;
 }
 
+.input-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+
 input {
+  flex: 1;
+  min-width: 150px;
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  flex: 1;
-  margin-right: 10px;
 }
 
 button {
@@ -79,9 +88,31 @@ button:hover {
   background-color: #1f5e85;
 }
 
-.input-row {
-  display: flex;
-  margin-bottom: 15px;
-  gap: 10px;
-  flex-wrap: wrap;
+/* 📱 Responsive Design for Mobile Devices */
+@media (max-width: 600px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  h2 {
+    font-size: 1.1rem;
+  }
+
+  .container {
+    padding: 15px;
+    margin: 15px auto;
+  }
+
+  li {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .input-row {
+    flex-direction: column;
+  }
+
+  input, button {
+    width: 100%;
+  }
 }
