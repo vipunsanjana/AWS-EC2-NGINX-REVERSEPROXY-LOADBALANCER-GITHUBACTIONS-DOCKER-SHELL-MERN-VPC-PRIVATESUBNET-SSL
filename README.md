@@ -1,63 +1,65 @@
-# MERN App Deployment on AWS EC2 with Docker, NGINX Load Balancer, and GitHub Actions
+# MERN App Deployment on AWS EC2 with Docker, NGINX Load Balancer, Reverse Proxy and GitHub Actions
 
-## Overview
+## 🚀 Overview
 
 This project demonstrates how to:
 
-* Build and deploy a MERN (MongoDB, Express, React, Node.js) application.
-* Use Docker to containerize backend and frontend.
-* Use NGINX as a reverse proxy and load balancer (2 backend replicas).
-* Secure the app with SSL via Let's Encrypt.
-* Automate deployment with GitHub Actions.
-* Store secrets securely in GitHub Secrets and AWS Secrets Manager.
+- Build and deploy a **MERN** (MongoDB, Express, React, Node.js) application.
+- Use **Docker** to containerize both backend and frontend apps.
+- Use **NGINX** as a reverse proxy and load balancer for backend replicas.
+- Secure the application using **SSL via Let's Encrypt**.
+- Automate deployment using **GitHub Actions**.
+- Store secrets securely using **GitHub Secrets** and **AWS Secrets Manager**.
 
 ---
 
-## Project Structure
+## 📁 Project Structure
 
 ```
-mern-app/
-├── backend/               # Express backend
+
+MY-MERN-APP/
+├── backend/               # Express backend service
 │   ├── Dockerfile
 │   ├── server.js
-│   └── package.json
+│   ├── package.json
+│   └── package-lock.json
 ├── frontend/              # React frontend
 │   ├── Dockerfile
-│   ├── nginx.conf        # NGINX config for serving React app
+│   ├── nginx.conf         # NGINX config to serve React
+│   ├── index.html
+│   ├── vite.config.js
 │   └── package.json
-├── scripts/
-│   ├── run_backend.sh     # Start 2 backend containers
-│   ├── run_frontend.sh    # Start frontend container
-│   ├── nginx_lb.sh        # Run NGINX load balancer container
-│   └── nginx_lb.conf      # NGINX load balancer config
-├── .gitignore
+├── nginx-lb/              # NGINX Load Balancer config
+│   ├── Dockerfile
+│   ├── nginx.conf
+│   └── entrypoint.sh
+├── .github/
+│   └── workflows/
+│       └── deploy.yml     # GitHub Actions CI/CD workflow
+├── docker-compose.yml     # Optional: for local orchestration
 ├── .dockerignore
-└── .github/
-    └── workflows/
-        └── deploy.yml     # GitHub Actions workflow
-```
+├── .gitignore
+└── README.md
+
+````
 
 ---
 
-## Prerequisites
+## ✅ Prerequisites
 
-* AWS EC2 instance (Ubuntu recommended)
-* Docker installed on EC2
-* Domain name pointing to EC2 public IP
-* Docker Hub account (for image registry)
-* GitHub repository configured with Secrets:
+- AWS EC2 instance (Ubuntu preferred)
+- Docker installed on EC2
+- A domain name pointing to your EC2 public IP
+- Docker Hub account
+- GitHub repository with the following secrets:
 
-  * `DOCKERHUB_USERNAME`
-  * `DOCKERHUB_ACCESS_TOKEN`
-  * `EC2_HOST`
-  * `EC2_USER`
-  * `EC2_SSH_KEY` (your private SSH key content)
-
+  - `DOCKERHUB_USERNAME`
+  - `DOCKERHUB_ACCESS_TOKEN`
 ---
 
-## Setup on EC2
+## ⚙️ EC2 Setup
 
-Run these commands on EC2 to prepare environment:
+SSH into your EC2 instance and run:
 
 ```bash
 sudo apt update
@@ -65,13 +67,13 @@ sudo apt install docker.io nginx certbot python3-certbot-nginx -y
 sudo systemctl enable docker
 sudo usermod -aG docker ubuntu
 newgrp docker
-```
+````
 
 ---
 
-## SSL Setup
+## 🔐 SSL Configuration
 
-Run once on EC2 after DNS is pointed to your EC2 IP:
+After pointing your domain to EC2, run:
 
 ```bash
 sudo certbot --nginx -d yourdomain.com --non-interactive --agree-tos -m your-email@example.com
@@ -80,16 +82,17 @@ sudo systemctl reload nginx
 
 ---
 
-## Docker Images
+## 🐳 Docker Setup
 
-* Backend listens on port `5000`.
-* Frontend served by NGINX listens on port `80` inside container, mapped to `8080` on host.
-* Two backend replicas run on ports `5001` and `5002`.
-* NGINX load balancer listens on port `80`, proxies `/api` to backend replicas, serves frontend from port `8080`.
+### Ports
+
+* Backend: `5000` (inside container), mapped to `5001`, `5002`
+* Frontend: `80` inside container, mapped to `8080`
+* NGINX Load Balancer: listens on `80`
 
 ---
 
-## NGINX Load Balancer Config (`scripts/nginx_lb.conf`)
+## 🔁 NGINX Load Balancer (`nginx-lb/nginx.conf`)
 
 ```nginx
 upstream backend {
@@ -116,55 +119,48 @@ server {
 
 ---
 
-## Deployment Automation
+## ⚡ GitHub Actions (CI/CD)
 
-### GitHub Actions Workflow
+The workflow in `.github/workflows/deploy.yml` does the following:
 
-On each push to `main`, workflow will:
+1. Builds Docker images for backend & frontend.
+2. Pushes images to Docker Hub.
+3. SSH into EC2 → Pull images → Restart containers.
 
-1. Build backend and frontend Docker images.
-2. Push images to Docker Hub.
-3. SSH into EC2, pull updated images.
-4. Restart backend (2 replicas), frontend, and NGINX load balancer containers.
-
-The workflow file is `.github/workflows/deploy.yml`.
+Trigger: Push to `main` branch.
 
 ---
 
-## How to Run Locally
+## 🧪 Run Locally
 
-1. Clone repo.
-2. Build images locally:
+### 1. Clone Repo
+
+```bash
+git clone https://github.com/yourusername/mern-app.git
+cd mern-app
+```
+
+### 2. Build Images
 
 ```bash
 docker build -t yourusername/mern-backend:latest ./backend
 docker build -t yourusername/mern-frontend:latest ./frontend
 ```
 
-3. Run backend replicas:
+### 3. Run Containers
 
 ```bash
-./scripts/run_backend.sh
-```
-
-4. Run frontend:
-
-```bash
-./scripts/run_frontend.sh
-```
-
-5. Run NGINX load balancer:
-
-```bash
-./scripts/nginx_lb.sh
+docker run -d --name backend_5001 -p 5001:5000 yourusername/mern-backend
+docker run -d --name backend_5002 -p 5002:5000 yourusername/mern-backend
+docker run -d --name frontend -p 8080:80 yourusername/mern-frontend
+docker run -d --name nginx_lb -p 80:80 -v ./nginx-lb/nginx.conf:/etc/nginx/nginx.conf nginx
 ```
 
 ---
 
-## Viewing Logs
+## 📋 Logs
 
-* GitHub Actions logs: Go to GitHub repo → Actions tab → click latest run → expand steps.
-* EC2 Docker container logs:
+### Docker container logs:
 
 ```bash
 docker logs -f backend_5001
@@ -173,7 +169,7 @@ docker logs -f frontend
 docker logs -f nginx_lb
 ```
 
-* NGINX logs on EC2 (if native NGINX used):
+### NGINX logs (native):
 
 ```bash
 sudo tail -f /var/log/nginx/access.log
@@ -182,28 +178,30 @@ sudo tail -f /var/log/nginx/error.log
 
 ---
 
-## Troubleshooting
+## 🧩 Troubleshooting
 
-* Make sure ports 80, 8080, 5001, 5002 are open in your EC2 security group.
-* Confirm domain DNS is properly pointed.
-* Check Docker container logs for errors.
-* Check GitHub Actions logs for build or deployment errors.
+* Check that ports 80, 8080, 5001, 5002 are open in EC2 Security Group.
+* Validate domain → EC2 public IP mapping.
+* Check logs of Docker containers or GitHub Actions run.
 
 ---
 
-## Need More Help?
+## 🧠 Need Help?
 
 Feel free to ask for:
 
-* Backend sample Express `server.js`
-* Frontend React starter template
-* MongoDB integration help
-* SSL auto-renew scripts
-* Anything else!
+* Sample `server.js` for Express backend
+* Sample React frontend setup
+* MongoDB connection guidance
+* Auto-renewing SSL setup
 
 ---
 
-# Thank you! 🚀
+## 👤 Maintainer
+
+**Vipun Sanjana**
+Former Intern - Software Engineer
+[WSO2 Cloud Security Operations Center]
 
 ---
 
