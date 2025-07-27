@@ -71,7 +71,7 @@ newgrp docker
 
 ---
 
-## 🔐 SSL Configuration
+## 🔐 SSL Configuration(If you need)
 
 After pointing your domain to EC2, run:
 
